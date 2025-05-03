@@ -13,6 +13,6 @@ export default function AdminLayout({
           <NavLink href="/admin/orders">Sales</NavLink>
           <NavLink href="/admin/charts">Charts</NavLink>
         </Nav>
-        <div className="bg-gray-200 container m-auto my-9">{children}</div>
+        <div className="container m-auto my-9">{children}</div>
       </>
     }

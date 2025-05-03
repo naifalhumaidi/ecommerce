@@ -35,7 +35,7 @@ model Product {
 
 model Order {
   id               String   @id @default(uuid())
-  pricePaidInCents String
+  pricePaidInCents Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   userId           String
@@ -51,3 +51,13 @@ model downloadVerification {
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
+
+// ? To learn more
+
+//? Why used "now()" in the first one while used @updatedAt in the second?
+// createdAt        DateTime @default(now())
+// updatedAt        DateTime @updatedAt
+
+//? why this syntax? why fields, references and why 2 probs in 2 lines?
+// userId    String
+// user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
