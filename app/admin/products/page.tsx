@@ -1,7 +1,9 @@
+import PageHeader from "../_components/pageHeader";
+
 export default function Home() {
-    return (
-      <>
-        <p>I am a Product</p>
-      </>
-    );
-  }
+  return (
+    <>
+      <PageHeader><p>I am the Product page</p></PageHeader>
+    </>
+  );
+}

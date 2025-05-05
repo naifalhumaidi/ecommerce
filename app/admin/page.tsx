@@ -9,13 +9,11 @@ export default async function Dashboard() {
   ])
   
   return (
-    <>
     <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <DashboardCard title={"Sales"} subtitle={formatNumber(salesData.NumberOfSales)} content={formatCurrency(salesData.amount)}/>
       <DashboardCard title={"Customers"} subtitle={formatNumber(userData.userCount)} content={formatCurrency(userData.averageValuePerUser)}/>
-      <DashboardCard title={"Product"} subtitle={formatNumber(productData.activeUsers)} content={formatNumber(productData.inactiveUsers)}/>
+      <DashboardCard title={"Product"} subtitle={formatNumber(productData.inactiveUsers)} content={formatNumber(productData.activeUsers)}/>
     </div>
-    </>
   );
 }
 const getSalesData = async () => {
