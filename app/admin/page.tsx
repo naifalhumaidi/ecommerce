@@ -3,7 +3,7 @@ import { formatCurrency, formatNumber } from "@/lib/formatter";
 import db from "@/lib/prisma";
 
 
-export default async function Dashboard() {
+export default async function AdminDashboardPage() {
   const [salesData, userData, productData] = await Promise.all([
     getSalesData(), getUserData(), getProductData()
   ])
