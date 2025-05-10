@@ -8,14 +8,17 @@ import { useState } from "react";
 import { addProduct } from "../../_actions/products";
 
 const ProductForm = () => {
-  const [priceInCents, setPriceInCents] = useState<number>();
+  const [priceInCents, setPriceInCents] = useState<number>(0);
   return (
     <>
       <form action={addProduct} className=" my-8 space-y-5">
+        {/* Name Input */}
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
           <Input type="text" id="name" name="name" required />
         </div>
+
+        {/* Price Input */}
         <div className="space-y-2">
           <Label htmlFor="priceInCents">PriceInCents</Label>
           <Input
@@ -24,31 +27,45 @@ const ProductForm = () => {
             name="priceInCents"
             required
             value={priceInCents}
-            onKeyDown={ event => {
-              if(event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-")
+            onKeyDown={(event) => {
+              if (
+                event.key === "e" ||
+                event.key === "E" ||
+                event.key === "+" ||
+                event.key === "-"
+              )
                 event.preventDefault();
             }}
-            onChange={ event =>
-              setPriceInCents(Number(event.target.value) || undefined)
-            }
+            onFocus={(event) => {
+              event.target.value === "0" ? event.target.value = "" : event.target.value;
+            }}
+            onChange={(event) => setPriceInCents(Number(event.target.value))}
           />
           <div className="text-muted-foreground">
             {formatCurrency((priceInCents || 0) / 100)}
           </div>
         </div>
+
+        {/* Description Input */}
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea id="description" name="description" required/>
+          <Textarea id="description" name="description" />
         </div>
-         <div className="space-y-2">
+
+        {/* Image Input */}
+        <div className="space-y-2">
           <Label htmlFor="image">Image</Label>
-          <Input type="file" id="image" name="image" required/>
-         </div>
-         <div className="space-y-2">
+          <Input type="file" id="image" name="image" />
+        </div>
+
+        {/* File Input */}
+        <div className="space-y-2">
           <Label htmlFor="file">File</Label>
-          <Input type="file" id="file" name="file" required/>
-         </div>
-         <Button type="submit">Save</Button>
+          <Input type="file" id="file" name="file" />
+        </div>
+
+        {/* Submit Button */}
+        <Button type="submit">Save</Button>
       </form>
     </>
   );
