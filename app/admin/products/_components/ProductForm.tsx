@@ -5,12 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency } from "@/lib/formatter";
 import { useActionState, useState } from "react";
-import { addProductAction } from "../../_actions/products";
+import { addProduct } from "../../_actions/products";
 import { useFormStatus } from "react-dom";
 
 const ProductForm = () => {
   const [priceInCents, setPriceInCents] = useState<number>(0);
-  const [error, action]= useActionState(addProductAction, {})
+  const [error, action]= useActionState(addProduct, {})
   return (
     <>
       <form action={action} className=" my-8 space-y-5">
@@ -62,7 +62,6 @@ const ProductForm = () => {
           <Label htmlFor="image">Image</Label>
           <Input type="file" id="image" name="image" required/>
           {error.image && <div className="text-destructive">{error.image}</div>}
-
         </div>
 
         {/* File Input */}

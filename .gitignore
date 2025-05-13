@@ -3,6 +3,10 @@
 #! just notes:
 notes.js
 
+# Product files and images
+/products
+/public/products
+
 # dependencies
 /node_modules
 /.pnp
