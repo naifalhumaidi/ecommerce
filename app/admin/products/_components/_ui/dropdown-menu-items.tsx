@@ -24,9 +24,9 @@ const ToggleActivationItem = ({id, isAvailable}:{ id: string, isAvailable:boolea
   </DropdownMenuItem>
 );
 
-const EditItem = () => (
+const EditItem = ({id}:{ id: string; }) => (
   <DropdownMenuItem>
-    <Link href={"/admin/products/edit"}>Edit</Link>
+    <Link href={`/admin/products/${id}/edit`}>Edit</Link>
   </DropdownMenuItem>
 );
 

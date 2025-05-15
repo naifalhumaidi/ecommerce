@@ -4,14 +4,17 @@ import { notFound, redirect } from "next/navigation";
 import { coerce, number, string, z } from "zod";
 import fs from "fs/promises";
 import { PathLike } from "fs";
+// ? Study this page again
 
+// Schemas -------------------------------------------------------------------
 const fileSchema = z.instanceof(File, { message: "Required" });
-// ? Study this
+
 const imageSchema = fileSchema.refine(
   (file) => file.size === 0 || file.type.startsWith("image/")
 );
 
-const addSchema = z.object({
+// Action Schemas -------------------------------------------------------------------
+const createSchema = z.object({
   name: string().min(1).max(150),
   description: string().min(1).max(1000),
   priceInCents: coerce.number().int().min(1),
@@ -21,25 +24,56 @@ const addSchema = z.object({
   file: imageSchema.refine((file) => file.size > 0, "Required"),
 });
 
-// * make a better name
-const createFileAndGetPath = async (file: File, dirPath: PathLike) => {
+const updateSchema = createSchema.extend({
+  file: fileSchema.optional(),
+  image: fileSchema.optional(),
+});
+
+// Functions -------------------------------------------------------------------
+const parseFormData = (formData: FormData) => {
+  return updateSchema.safeParse(Object.fromEntries(formData.entries()));
+};
+
+const makeDirectory = async (dirPath: PathLike) => {
   await fs.mkdir(dirPath, { recursive: true }); //? {recursive:true}
-  const filePath = `${dirPath}/${crypto.randomUUID()}-${file.name}`;
+};
+
+const getFilePath = (name: string, dirPath: PathLike) => {
+  return `${dirPath}/${crypto.randomUUID()}-${name}`;
+};
+
+const makeFile = async (file: File, dirPath: PathLike) => {
+  const filePath = getFilePath(file.name, dirPath);
   await fs.writeFile(filePath, Buffer.from(await file.arrayBuffer()));
   return filePath;
 };
 
-// ? Study this
-export const addProduct = async (prevState: unknown, formData: FormData) => {
-  const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
-  if (!result.success) return result.error?.formErrors.fieldErrors;
-  const data = result.data;
-  const filePath: string = await createFileAndGetPath(data.file, "products");
-  const imagePath: string = await createFileAndGetPath(
-    data.image,
-    "public/products"
+const updateFile = async (newFile:File, dirPath: PathLike, oldFilePath:string) => {
+  if (newFile == null) return oldFilePath;
+  await fs.unlink(oldFilePath);
+  return (await makeFile(newFile, dirPath)).replace(/public/, "");
+}
+
+// Actions -------------------------------------------------------------------
+export const createProduct = async (prevState: unknown, formData: FormData) => {
+  // getFormData
+  const parsedFormData = parseFormData(formData);
+  if (!parsedFormData.success)
+    return parsedFormData.error?.formErrors.fieldErrors;
+  const data = parsedFormData.data;
+
+  // Make a file and get its path
+  makeDirectory("products");
+  const filePath = await makeFile(data.file, "products"); //? Why I need await here, i have it inside
+  
+  // Make an image and get its path
+  makeDirectory("public/products");
+   const imagePath = (await makeFile(data.image, "public/products")).replace(
+    /public/,
+    ""
   );
 
+  // Create the product
   await db.product.create({
     data: {
       isAvailable: false,
@@ -50,7 +84,50 @@ export const addProduct = async (prevState: unknown, formData: FormData) => {
       filePath,
     },
   });
-  redirect("http://localhost:3000/admin/products");
+  redirect("/admin/products");
+};
+
+export const updateProduct = async (
+  prevState: unknown,
+  formData: FormData,
+  id: string
+) => {
+  // getFormData
+  const parsedFormData = parseFormData(formData);
+  if (!parsedFormData.success)
+    return parsedFormData.error?.formErrors.fieldErrors;
+  const data = parsedFormData.data;
+
+  // Get the old data
+  const prevData = await db.product.findUnique({ where: { id } });
+
+  // Update files
+  const filePath = updateFile(data.file, "products", prevData?.filePath);
+  const imagePath = updateFile(data.image, "products", prevData?.imagePath);
+
+  // Update the product
+  await db.product.update({
+    where: { id },
+    data: {
+      name: data.name,
+      priceInCents: data.priceInCents,
+      description: data.description,
+      imagePath,
+      filePath,
+    },
+  });
+  redirect("/admin/products");
+};
+
+export const deleteProduct = async (id: string) => {
+  const product = await db.product.delete({
+    where: { id },
+  });
+  if (product == null) return notFound();
+  Promise.all([
+    await fs.unlink(product.filePath),
+    await fs.unlink(product.imagePath),
+  ]);
 };
 
 export const toggleProductAvailability = async (
@@ -61,15 +138,4 @@ export const toggleProductAvailability = async (
     where: { id },
     data: { isAvailable: !isAvailable },
   });
-};
-
-export const deleteProduct = async (id: string) => {
-  const product = await db.product.delete({
-    where: { id },
-  });
-  if(product == null) return notFound();
-  Promise.all([
-    await fs.unlink(product.filePath),
-    await fs.unlink(product.imagePath)
-  ]);
 };

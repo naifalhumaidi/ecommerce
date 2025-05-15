@@ -27,7 +27,7 @@ const ProductDropdownMenu = ({product}:{product:product}) => {
       <DropdownMenuContent className="**:cursor-pointer">
         <DownloadItem id={product.id}/>
         <ToggleActivationItem id={product.id} isAvailable={product.isAvailable}/>
-        <EditItem/>
+        <EditItem id={product.id}/>
         <DeleteItem id={product.id} ordersCount={product._count.order}/>
       </DropdownMenuContent>
     </DropdownMenu>
