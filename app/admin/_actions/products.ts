@@ -26,11 +26,15 @@ const createSchema = z.object({
 
 const updateSchema = createSchema.extend({
   file: fileSchema.optional(),
-  image: fileSchema.optional(),
+  image: imageSchema.optional()
 });
 
 // Functions -------------------------------------------------------------------
-const parseFormData = (formData: FormData) => {
+const createFormDataSchema = (formData: FormData) => {
+  return createSchema.safeParse(Object.fromEntries(formData.entries()));
+};
+
+const updateFormDataSchema = (formData: FormData) => {
   return updateSchema.safeParse(Object.fromEntries(formData.entries()));
 };
 
@@ -57,14 +61,14 @@ const updateFile = async (newFile:File, dirPath: PathLike, oldFilePath:string) =
 // Actions -------------------------------------------------------------------
 export const createProduct = async (prevState: unknown, formData: FormData) => {
   // getFormData
-  const parsedFormData = parseFormData(formData);
-  if (!parsedFormData.success)
+  const parsedFormData = createFormDataSchema(formData);
+  if (parsedFormData.success === false)
     return parsedFormData.error?.formErrors.fieldErrors;
   const data = parsedFormData.data;
 
   // Make a file and get its path
   makeDirectory("products");
-  const filePath = await makeFile(data.file, "products"); //? Why I need await here, i have it inside
+  const filePath = await makeFile(data.file, "products");
   
   // Make an image and get its path
   makeDirectory("public/products");
@@ -88,22 +92,23 @@ export const createProduct = async (prevState: unknown, formData: FormData) => {
 };
 
 export const updateProduct = async (
+  id: string,
   prevState: unknown,
-  formData: FormData,
-  id: string
+  formData: FormData
 ) => {
   // getFormData
-  const parsedFormData = parseFormData(formData);
+  const parsedFormData = updateFormDataSchema(formData);
   if (!parsedFormData.success)
     return parsedFormData.error?.formErrors.fieldErrors;
   const data = parsedFormData.data;
 
   // Get the old data
   const prevData = await db.product.findUnique({ where: { id } });
+  if (prevData == null) return notFound();
 
   // Update files
-  const filePath = updateFile(data.file, "products", prevData?.filePath);
-  const imagePath = updateFile(data.image, "products", prevData?.imagePath);
+  const filePath = await updateFile(data.file!, "products", prevData?.filePath);
+  const imagePath = await updateFile(data.image!, "products", prevData?.imagePath);
 
   // Update the product
   await db.product.update({
@@ -124,10 +129,9 @@ export const deleteProduct = async (id: string) => {
     where: { id },
   });
   if (product == null) return notFound();
-  Promise.all([
-    await fs.unlink(product.filePath),
-    await fs.unlink(product.imagePath),
-  ]);
+  //? Use Promise.all([]) instead if fix the error;
+  await fs.unlink(product.filePath),
+  await fs.unlink(product.imagePath)
 };
 
 export const toggleProductAvailability = async (

@@ -12,13 +12,15 @@ import Image from "next/image";
 
 // ? why " | null"?
 const ProductForm = ({ product }: { product?: Product | null }) => {
-  const [priceInCents, setPriceInCents] = useState<number | undefined>(
-    product?.priceInCents
-  );
   const [error, action] = useActionState(
     product == null ? createProduct : updateProduct.bind(null, product.id),
     {}
   );
+
+  const [priceInCents, setPriceInCents] = useState<number | undefined>(
+    product?.priceInCents
+  );
+  
   return (
     <>
       <form action={action} className=" my-8 space-y-5">
