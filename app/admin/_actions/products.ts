@@ -26,7 +26,7 @@ const createSchema = z.object({
 
 const updateSchema = createSchema.extend({
   file: fileSchema.optional(),
-  image: imageSchema.optional()
+  image: imageSchema.optional(),
 });
 
 // Functions -------------------------------------------------------------------
@@ -38,7 +38,7 @@ const updateFormDataSchema = (formData: FormData) => {
   return updateSchema.safeParse(Object.fromEntries(formData.entries()));
 };
 
-const makeDirectory = async (dirPath: PathLike) => {
+const createDirectory = async (dirPath: PathLike) => {
   await fs.mkdir(dirPath, { recursive: true }); //? {recursive:true}
 };
 
@@ -46,17 +46,43 @@ const getFilePath = (name: string, dirPath: PathLike) => {
   return `${dirPath}/${crypto.randomUUID()}-${name}`;
 };
 
-const makeFile = async (file: File, dirPath: PathLike) => {
+const createFile = async (file: File, dirPath: PathLike) => {
   const filePath = getFilePath(file.name, dirPath);
   await fs.writeFile(filePath, Buffer.from(await file.arrayBuffer()));
   return filePath;
 };
 
-const updateFile = async (newFile:File, dirPath: PathLike, oldFilePath:string) => {
-  if (newFile == null) return oldFilePath;
-  await fs.unlink(oldFilePath);
-  return (await makeFile(newFile, dirPath)).replace(/public/, "");
-}
+const createImage = async (file: File, dirPath: PathLike) => {
+  return (await createFile(file, dirPath)).replace(/public/, "");
+};
+
+const deleteFile = async (filePath: string) => {
+  await fs.unlink(filePath);
+};
+
+const updateFile = async (
+  newFile: File,
+  dirPath: PathLike,
+  oldFilePath: string
+) => {
+  if (newFile?.size > 0) {
+    //? is the performance bad here? i used 2 awaits one by one, or not?, I used the second one after "return"
+    await deleteFile(oldFilePath);
+    return await createFile(newFile, dirPath);
+  }
+  return oldFilePath;
+};
+
+const updateImage = async (
+  newFile: File,
+  dirPath: PathLike,
+  oldFilePath: string
+) => {
+  return (await updateFile(newFile, dirPath, `public${oldFilePath}`)).replace(
+    /public/,
+    ""
+  );
+};
 
 // Actions -------------------------------------------------------------------
 export const createProduct = async (prevState: unknown, formData: FormData) => {
@@ -67,15 +93,12 @@ export const createProduct = async (prevState: unknown, formData: FormData) => {
   const data = parsedFormData.data;
 
   // Make a file and get its path
-  makeDirectory("products");
-  const filePath = await makeFile(data.file, "products");
-  
+  createDirectory("products");
+  const filePath = await createFile(data.file, "products");
+
   // Make an image and get its path
-  makeDirectory("public/products");
-   const imagePath = (await makeFile(data.image, "public/products")).replace(
-    /public/,
-    ""
-  );
+  createDirectory("public/products");
+  const imagePath = await createImage(data.image, "public/products");
 
   // Create the product
   await db.product.create({
@@ -108,9 +131,13 @@ export const updateProduct = async (
 
   // Update files
   const filePath = await updateFile(data.file!, "products", prevData?.filePath);
-  const imagePath = await updateFile(data.image!, "products", prevData?.imagePath);
+  const imagePath = await updateImage(
+    data.image!,
+    "public/products",
+    prevData?.imagePath
+  );
 
-  // Update the product
+  // Update the database
   await db.product.update({
     where: { id },
     data: {
@@ -129,9 +156,11 @@ export const deleteProduct = async (id: string) => {
     where: { id },
   });
   if (product == null) return notFound();
-  //? Use Promise.all([]) instead if fix the error;
-  await fs.unlink(product.filePath),
-  await fs.unlink(product.imagePath)
+
+  Promise.all([
+    await deleteFile(product.filePath),
+    await deleteFile(`public${product.imagePath}`),
+  ]);
 };
 
 export const toggleProductAvailability = async (
