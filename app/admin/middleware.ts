@@ -19,6 +19,9 @@ const middleware = async (req: NextRequest) => {
 
 const isAuthenticated = async (req:NextRequest)=>{
     return Promise.resolve(false);
+    const authHeader = req.headers.get("authorization") || req.headers.get("Authorization")
+    if(authHeader == null) return false;
+    const [username, password] = Buffer.from(authHeader?.split(" ");
 }
 
 const config = { matcher: "/admin/:path*" }
