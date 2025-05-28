@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const hashPassword = async (password: string) => {
-  const arrayBuffer =  await crypto.subtle.digest("SHA-512", new TextEncoder().encode(password));
-  return (await Buffer.from(arrayBuffer).toString("base64"));
-};
+// const hashPassword = async (password: string) => {
+//   const arrayBuffer =  await crypto.subtle.digest("SHA-512", new TextEncoder().encode(password));
+//   // console.log((await Buffer.from(arrayBuffer).toString("base64")));
+//   return (await Buffer.from(arrayBuffer).toString("base64"));
+// };
 
 const isValidUsername = (username: string) =>
   username === process.env.ADMIN_USERNAME;
 
 const isValidPassword = async (password: string) =>
-  (await hashPassword(password)) === process.env.ADMIN_HASHED_PASSWORD;
+  password === process.env.ADMIN_HASHED_PASSWORD;
 
 const isValidAdmin = (username: string, password: string) =>
   isValidUsername(username) && isValidPassword(password);
