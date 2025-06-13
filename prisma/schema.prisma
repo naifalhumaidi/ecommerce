@@ -25,7 +25,7 @@ model Product {
   description  String
   imagePath    String
   filePath     String
-  priceInCents Int
+  priceInCents BigInt
   isAvailable  Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

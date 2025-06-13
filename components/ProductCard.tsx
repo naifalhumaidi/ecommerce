@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import Link from "next/link";
-
+// ? is using the "Product" prisma type ok here or I should've created a new Type for just needed props(id, name,..)?
 const ProductCard = ({ id, name, description, priceInCents, imagePath }: Product) => {
   return (
     <Card key={id} className="flex flex-col overflow-hidden pt-0">
-      <CardHeader className="relative h-auto w-full aspect-video">
+      <CardHeader className="relative aspect-video">
         <Image
           fill
           src="/products/Screenshot_20250602_101242.png"
@@ -25,7 +25,7 @@ const ProductCard = ({ id, name, description, priceInCents, imagePath }: Product
         />
         <CardTitle>
           <h3 className="text-2xl">{name}</h3>
-          <p>{formatCurrency(priceInCents / 100)}</p>
+          <p>{formatCurrency(Number(priceInCents) / 100)}</p>
         </CardTitle>
       </CardHeader>
 
@@ -36,7 +36,7 @@ const ProductCard = ({ id, name, description, priceInCents, imagePath }: Product
       </CardContent>
 
       <CardFooter>
-        <Button className="w-full py-6">
+        <Button size="lg" className="w-full">
           <Link href={`/products/${id}/purchase`}>Purchase</Link>
         </Button> {/* //? asChild doesn't work here */}
       </CardFooter>
