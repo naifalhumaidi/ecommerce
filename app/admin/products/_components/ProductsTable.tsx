@@ -63,7 +63,7 @@ const ProductsTable = async () => {
               )}
             </TableCell>
             <TableCell>{product.name}</TableCell>
-            <TableCell>{formatCurrency(product.priceInCents / 100)}</TableCell>
+            <TableCell>{formatCurrency(Number(product.priceInCents) / 100)}</TableCell>
             <TableCell>{formatNumber(product._count.order)}</TableCell>
             <TableCell>
               <ProductDropdownMenu product={product} />
