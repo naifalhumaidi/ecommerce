@@ -5,24 +5,22 @@ import {
   getAllProducts,
 } from "./service";
 
-const HomePage = async () => {
-  return (
-    <main className="container">
-      {/* Newest Products */}
-      <ProductSection title={"Newest"} productFetcher={getNewestProducts} />
-      <br />
+const HomePage = async () => (
+  <main className="container">
+    {/* Newest Products */}
+    <ProductSection title={"Newest"} productFetcher={getNewestProducts} />
+    <br />
 
-      {/* Most Popular Products */}
-      <ProductSection
-        title={"Most Popular"}
-        productFetcher={getPopularProducts}
-      />
-      <br />
+    {/* Most Popular Products */}
+    <ProductSection
+      title={"Most Popular"}
+      productFetcher={getPopularProducts}
+    />
+    <br />
 
-      {/* All Products */}
-      <ProductSection title={"All Products"} productFetcher={getAllProducts} />
-    </main>
-  );
-};
+    {/* All Products */}
+    <ProductSection title={"All Products"} productFetcher={getAllProducts} />
+  </main>
+);
 
 export default HomePage;
