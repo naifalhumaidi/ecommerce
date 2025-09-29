@@ -147,7 +147,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/mnt/Data/Mine/Projects/Mine/Dev/Web_Dev/Latest/my_local_repo/ecommerce/generated/prisma",
+      "value": "/media/user/Data/Mine/Projects/Mine/Dev/Web_Dev/Latest/my_local_repo/ecommerce/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -161,7 +161,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/mnt/Data/Mine/Projects/Mine/Dev/Web_Dev/Latest/my_local_repo/ecommerce/prisma/schema.prisma",
+    "sourceFilePath": "/media/user/Data/Mine/Projects/Mine/Dev/Web_Dev/Latest/my_local_repo/ecommerce/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -175,11 +175,12 @@ const config = {
     "db"
   ],
   "activeProvider": "sqlite",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "file:./dev.db"
+        "value": null
       }
     }
   },

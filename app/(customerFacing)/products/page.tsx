@@ -1,15 +1,10 @@
-import ProductSection from "@/app/(customerFacing)/_components/ProductSection";
-import {
-  getNewestProducts,
-  getPopularProducts,
-  getAllProducts,
-} from ".././service";
+import { getAllProducts } from ".././service";
+import ProductGrid from "../_components/ProductGrid";
 
 const ProductsPage = async () => (
-    <main className="container">
-      <ProductSection title={"All Products"} productFetcher={getAllProducts} />
-    </main>
-  );
+  <main className="container">
+    <ProductGrid productFetcher={getAllProducts} />
+  </main>
+);
 
 export default ProductsPage;
-

@@ -8,7 +8,7 @@ import { DownloadItem, ToggleActivationItem, EditItem, DeleteItem } from "./_ui/
 type product = {
     name: string;
     id: string;
-    priceInCents: number;
+    priceInCents: bigint;
     isAvailable: boolean;
     _count: {
         order: number;

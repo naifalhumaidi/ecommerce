@@ -17,12 +17,11 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
     {}
   );
 
-  const [priceInCents, setPriceInCents] = useState<number | undefined>(
+  const [priceInCents, setPriceInCents] = useState<bigint | undefined>(
     product?.priceInCents
   );
   
   return (
-    <>
       <form action={action} className=" my-8 space-y-5">
         {/* Name Input */}
         <div className="space-y-2">
@@ -36,7 +35,6 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
           />
           {error.name && <div className="text-destructive">{error.name}</div>}
         </div>
-
         {/* Price Input */}
         <div className="space-y-2">
           <Label htmlFor="priceInCents">PriceInCents</Label>
@@ -64,7 +62,6 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
             <div className="text-destructive">{error.priceInCents}</div>
           )}
         </div>
-
         {/* Description Input */}
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
@@ -78,7 +75,6 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
             <div className="text-destructive">{error.description}</div>
           )}
         </div>
-
         {/* File Input */}
         <div className="space-y-2">
           <Label htmlFor="file">File</Label>
@@ -93,7 +89,6 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
             <p className="pl-3.5 text-muted-foreground">{product.filePath}</p>
           )}
         </div>
-
         {/* Image Input */}
         <div className="space-y-2">
           <Label htmlFor="image">Image</Label>
@@ -116,11 +111,9 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
             <p className="pl-3.5 text-muted-foreground">{product.imagePath}</p>
           )}
         </div>
-
         {/* Submit Button */}
         <SubmitButton />
       </form>
-    </>
   );
 };
 
@@ -128,7 +121,6 @@ const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {/* {pending ? "Saving" : "Save"} */}
       {pending ? "Saving" : "Save"}
     </Button>
   );
