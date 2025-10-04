@@ -10,6 +10,7 @@ import { PathLike } from "fs";
 const fileSchema = z.instanceof(File, { message: "Required" });
 
 const imageSchema = fileSchema.refine(
+  //?
   (file) => file.size === 0 || file.type.startsWith("image/")
 );
 
@@ -18,10 +19,8 @@ const createSchema = z.object({
   name: string().min(1).max(150),
   description: string().min(1).max(1000),
   priceInCents: coerce.number().int().min(1),
-  //? do i really need to validate the size while i set the file input required?
-  image: fileSchema.refine((file) => file.size > 0, "Required"),
-  // ? why used refine and the size codition here too?
-  file: imageSchema.refine((file) => file.size > 0, "Required"),
+  file: fileSchema.refine((file) => file.size > 0, "Required"),
+  image: imageSchema.refine((image) => image.size > 0, "Required"),
 });
 
 const updateSchema = createSchema.extend({
@@ -66,7 +65,7 @@ const updateFile = async (
   oldFilePath: string
 ) => {
   if (newFile?.size > 0) {
-    //? is the performance bad here? i used 2 awaits one by one, or not?, I used the second one after "return"
+    //? is the performance bad here? i used 2 awaits one by one..
     await deleteFile(oldFilePath);
     return await createFile(newFile, dirPath);
   }
@@ -74,11 +73,11 @@ const updateFile = async (
 };
 
 const updateImage = async (
-  newFile: File,
+  newImage: File,
   dirPath: PathLike,
-  oldFilePath: string
+  oldImagePath: string
 ) => {
-  return (await updateFile(newFile, dirPath, `public${oldFilePath}`)).replace(
+  return (await updateFile(newImage, dirPath, `public${oldImagePath}`)).replace(
     /public/,
     ""
   );
