@@ -23,8 +23,7 @@ const ProductCard = ({
     <Card key={id} className="gap-3 overflow-hidden pt-0">
       <div className="relative aspect-video">
         <Image fill alt={name}
-          src="/products/Screenshot_20250602_101242.png"
-          //! src={imagePath}
+           src={imagePath}
         />
       </div>
       <CardHeader>

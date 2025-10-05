@@ -1,7 +1,7 @@
 "use server";
 import db from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import { coerce, number, string, z } from "zod";
+import { coerce, string, z } from "zod";
 import fs from "fs/promises";
 import { PathLike } from "fs";
 // ? Study this page again
@@ -92,11 +92,11 @@ export const createProduct = async (prevState: unknown, formData: FormData) => {
   const data = parsedFormData.data;
 
   // Make a file and get its path
-  createDirectory("products");
+  await createDirectory("products");
   const filePath = await createFile(data.file, "products");
 
   // Make an image and get its path
-  createDirectory("public/products");
+  await createDirectory("public/products");
   const imagePath = await createImage(data.image, "public/products");
 
   // Create the product

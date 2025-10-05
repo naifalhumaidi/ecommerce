@@ -1,8 +1,6 @@
 import db from "@/lib/prisma";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises"
-import { Product } from "@/generated/prisma";
 import { notFound } from "next/navigation";
 
 const getProduct = async (id: string) => {
@@ -27,9 +25,10 @@ const getFileInfo = async (id: string) => {
     }
 }
 
-const GET = async (req: NextRequest, { params: { id } }: { params: { id: string } }) => {
+const GET = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
     const { file, size, name, extension } = await getFileInfo(id);
-    return new NextResponse(file, {
+    return new NextResponse(new Uint8Array(file), {
         headers: {
             "Content-Disposition": `attachment; filename="${name}.${extension}"`,
             "Content-Length": size.toString()

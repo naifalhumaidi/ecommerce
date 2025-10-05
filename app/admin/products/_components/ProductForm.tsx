@@ -42,7 +42,7 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
             type="number"
             id="priceInCents"
             name="priceInCents"
-            value={priceInCents == undefined ? "" : priceInCents}
+            value={priceInCents == undefined ? "" : Number(priceInCents)}
             required
             onKeyDown={(event) => {
               if (
@@ -53,10 +53,10 @@ const ProductForm = ({ product }: { product?: Product | null }) => {
               )
                 event.preventDefault();
             }}
-            onChange={(event) => setPriceInCents(Number(event.target.value))}
+            onChange={(event) => setPriceInCents(event.target.value?BigInt(event.target.value):undefined)}
           />
           <div className="text-muted-foreground">
-            {formatCurrency((priceInCents || 0) / 100)}
+            {formatCurrency((Number(priceInCents) || 0) / 100)}
           </div>
           {error.priceInCents && (
             <div className="text-destructive">{error.priceInCents}</div>

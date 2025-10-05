@@ -27,9 +27,9 @@ const getMostPopularProducts = async (count?: number) =>
 
 // Main Page Products Count for each Category
 const ProductsCount = 5;
-const getFiveProducts = () => getAllProducts(5);
-const getNewestFiveProducts = () => getNewestProducts(5);
-const getMostPopularFiveProducts = () => getMostPopularProducts(5);
+const getFiveProducts = () => getAllProducts(ProductsCount);
+const getNewestFiveProducts = () => getNewestProducts(ProductsCount);
+const getMostPopularFiveProducts = () => getMostPopularProducts(ProductsCount);
 
 export {
   getAllProducts,
