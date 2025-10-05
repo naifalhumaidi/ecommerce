@@ -7,13 +7,13 @@ import {
 } from "./product-action-triggers";
 import Link from "next/link";
 
-const DownloadItem = ({id}:{ id: string; }) => (
-  <DropdownMenuItem>
-    <a download href={`/admin/products/${id}/download`}>
-      Download
-    </a>
-  </DropdownMenuItem>
-);
+// const DownloadItem = ({id}:{ id: string; }) => (
+//   <DropdownMenuItem>
+//     <a download href={`/admin/products/${id}/download`}>
+//       Download
+//     </a>
+//   </DropdownMenuItem>
+// );
 
 const ToggleActivationItem = ({id, isAvailable}:{ id: string, isAvailable:boolean }) => (
     <DropdownMenuItem>
@@ -40,7 +40,7 @@ const DeleteItem = ({id, ordersCount}:{ id: string, ordersCount: number }) => (
 );
 
 export {
-    DownloadItem,
+    // DownloadItem,
     ToggleActivationItem,
     EditItem,
     DeleteItem

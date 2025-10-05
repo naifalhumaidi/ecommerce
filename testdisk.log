@@ -802,3 +802,4 @@ interface_write()
 No partition found or selected for recovery
 simulate write!
 SIGHUP detected! PhotoRec has been killed.
+SIGHUP detected! PhotoRec has been killed.
